@@ -1,5 +1,5 @@
 import './App.css';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 function App() {
@@ -13,28 +13,36 @@ function App() {
     statement: false,
     amount: false,
   });
-  const [total, setTotal]=useState(0)
-  useEffect(()=>{
-    const newTotal =statements.reduce((sum,{type,amount})=>{
-      if(type == "expense"){
-        return sum -parseFloat(amount)
-      } else{
-        return sum +parseFloat(amount)
-      }
-     
-    },0);
-    setTotal(newTotal);
-  },[statements]);
+  const [total, setTotal] = useState(0);
 
-  const renderTotal =() => {
-    if(total >0) {
-      return <h1 className="total-text success">+{Math.abs(total)}</h1>;
-    }else if(total<0) {
-      return <h1 className="total-text danger"> -{Math.abs(total)}</h1>;
-    }else{
-      return <h1 className="total-text">{Math.abs(total)}</h1>
+  useEffect(() => {
+    // Retrieve statements from localStorage
+    const storedStatements = JSON.parse(localStorage.getItem('statements'));
+    if (storedStatements) {
+      setStatements(storedStatements);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    // Save statements to localStorage
+    localStorage.setItem('statements', JSON.stringify(statements));
+    
+    // Calculate total
+    const newTotal = statements.reduce((sum, { type, amount }) => {
+      return type === "expense" ? sum - parseFloat(amount) : sum + parseFloat(amount);
+    }, 0);
+    setTotal(newTotal);
+  }, [statements]);
+
+  const renderTotal = () => {
+    if (total > 0) {
+      return <h1 className="total-text success">+{Math.abs(total)}</h1>;
+    } else if (total < 0) {
+      return <h1 className="total-text danger"> -{Math.abs(total)}</h1>;
+    } else {
+      return <h1 className="total-text">{Math.abs(total)}</h1>;
+    }
+  };
 
   const handleUpdateInput = (e) => {
     setInput({
@@ -78,6 +86,14 @@ function App() {
       amount: "",
       statementType: "income",
     });
+  };
+
+  const handleClearStatements = () => {
+    const confirmClear = window.confirm('Are you sure you want to clear the list? This will delete all your items.');
+    if (confirmClear) {
+      localStorage.removeItem('statements');
+      setStatements([]);
+    }
   };
 
   return (
@@ -124,6 +140,10 @@ function App() {
             </div>
           ))}
         </div>
+        <button onClick={handleClearStatements} style={{ backgroundColor: '#f44336', border: 'none', color: 'white', padding: '10px 20px', textAlign: 'center', textDecoration: 'none', display: 'inline-block', fontSize: '16px', marginTop: '10px', cursor: 'pointer', borderRadius: '5px' }}>
+  Clear List
+</button>
+
       </div>
     </main>
   );
