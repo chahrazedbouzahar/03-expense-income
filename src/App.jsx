@@ -1,13 +1,15 @@
-import './App.css';
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import './App.css';
 
 function App() {
-  const [statements, setStatements] = useState([]);
+  const [statements, setStatements] = useState(
+    JSON.parse(localStorage.getItem('statements')) || []
+  );
   const [input, setInput] = useState({
-    statement: "",
-    amount: "",
-    statementType: "income",
+    statement: '',
+    amount: '',
+    statementType: 'income',
   });
   const [showError, setShowError] = useState({
     statement: false,
@@ -26,10 +28,10 @@ function App() {
   useEffect(() => {
     // Save statements to localStorage
     localStorage.setItem('statements', JSON.stringify(statements));
-    
+
     // Calculate total
     const newTotal = statements.reduce((sum, { type, amount }) => {
-      return type === "expense" ? sum - parseFloat(amount) : sum + parseFloat(amount);
+      return type === 'expense' ? sum - parseFloat(amount) : sum + parseFloat(amount);
     }, 0);
     setTotal(newTotal);
   }, [statements]);
@@ -82,14 +84,16 @@ function App() {
       },
     ]);
     setInput({
-      statement: "",
-      amount: "",
-      statementType: "income",
+      statement: '',
+      amount: '',
+      statementType: 'income',
     });
   };
 
-  const handleClearStatements = () => {
-    const confirmClear = window.confirm('Are you sure you want to clear the list? This will delete all your items.');
+  const handleClearList = () => {
+    const confirmClear = window.confirm(
+      'Are you sure you want to clear the list? This will delete all your items.'
+    );
     if (confirmClear) {
       localStorage.removeItem('statements');
       setStatements([]);
@@ -106,21 +110,21 @@ function App() {
             placeholder="income or expense"
             onChange={handleUpdateInput}
             value={input.statement}
-            name='statement'
-            style={showError.statement ? { borderColor: "rgb(206,76,76)" } : null}
+            name="statement"
+            style={showError.statement ? { borderColor: 'rgb(206,76,76)' } : null}
           />
           <input
             type="number"
             placeholder="$Amount"
             onChange={handleUpdateInput}
             value={input.amount}
-            name='amount'
-            style={showError.amount ? { borderColor: "rgb(206,76,76)" } : null}
+            name="amount"
+            style={showError.amount ? { borderColor: 'rgb(206,76,76)' } : null}
           />
           <select
             onChange={handleUpdateInput}
             value={input.statementType}
-            name='statementType'
+            name="statementType"
           >
             <option value="income">Income</option>
             <option value="expense">Expense</option>
@@ -134,16 +138,30 @@ function App() {
                 <h4>{name}</h4>
                 <p>{date}</p>
               </div>
-              <p className={`amount-text ${type === "income" ? "success" : "danger"}`}>
-                {type === "income" ? "+" : "-"} ${amount}
+              <p className={`amount-text ${type === 'income' ? 'success' : 'danger'}`}>
+                {type === 'income' ? '+' : '-'} ${amount}
               </p>
             </div>
           ))}
         </div>
-        <button onClick={handleClearStatements} style={{ backgroundColor: '#f44336', border: 'none', color: 'white', padding: '10px 20px', textAlign: 'center', textDecoration: 'none', display: 'inline-block', fontSize: '16px', marginTop: '10px', cursor: 'pointer', borderRadius: '5px' }}>
-  Clear List
-</button>
-
+        <button
+          onClick={handleClearList}
+          style={{
+            backgroundColor: '#f44336',
+            border: 'none',
+            color: 'white',
+            padding: '10px 20px',
+            textAlign: 'center',
+            textDecoration: 'none',
+            display: 'inline-block',
+            fontSize: '16px',
+            marginTop: '10px',
+            cursor: 'pointer',
+            borderRadius: '5px',
+          }}
+        >
+          Clear List
+        </button>
       </div>
     </main>
   );
