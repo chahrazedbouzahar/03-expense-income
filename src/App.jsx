@@ -129,7 +129,8 @@ function App() {
             <option value="income">Income</option>
             <option value="expense">Expense</option>
           </select>
-          <button onClick={handleAddNewStatement}>+</button>
+          <button style={{ color: 'white', backgroundColor: 'black' }} 
+           onClick={handleAddNewStatement}>+</button>
         </div>
         <div>
           {statements.map(({ id, name, type, amount, date }) => (

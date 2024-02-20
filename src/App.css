@@ -59,3 +59,7 @@ color: rgb(81,190,81)
 .danger {
   color: rgb(206,76,76)
 }
+.custom-button {
+  color: white;
+  background-color: black;
+}
